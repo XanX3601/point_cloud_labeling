@@ -1,4 +1,6 @@
-Point_Cloud_Labelling
+# point_cloud_labelling
+
+In this project, we try to implement the method described in [this paper](https://ieeexplore.ieee.org/abstract/document/7900038). You can also find it in [`materials`](materials/). The goal is to labelize a point cloud without a precedant "segmentation step or hand-crafted features". To do so, we will use a 3D convolutional artificial neural network.
 
 ## Prerequisites
 
