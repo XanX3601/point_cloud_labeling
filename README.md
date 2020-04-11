@@ -21,6 +21,21 @@ wget -O dataset/dataset.zip https://www.vision.rwth-aachen.de/media/resource_fil
 unzip dataset/dataset.zip -d dataset/numpy_files
 ```
 
+A script allows you to fuse each cloud points from the dataset into a unique
+clous point. These fused cloud points are used to generate the training
+datasets.
+
+```shell
+python fuse_npy.py
+```
+
+A script allows you to transform the fused cloud points into training datasets that
+will be fed to the neural network during the training.
+
+```shell
+python generate_training_dataset.py
+```
+
 A script allows you to transform the raw dataset into `.ply` files, saved in `dataset/ply_files`. You can then read these files with CloudCompare or Meshlab for example to visualize the different point clouds.
 
 ```shell
