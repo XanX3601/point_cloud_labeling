@@ -26,3 +26,11 @@ A script allows you to transform the raw dataset into `.ply` files, saved in `da
 ```shell
 python generate_ply.py
 ```
+
+## Usage
+
+First, you need to create a neural network model. To do so, simple use the following command. Add `--cuda` for GPU support. Skip this part if you want to resume a training or use an existing network.
+
+```shell
+python create_net.py --path networks/neural_net.pt
+```
