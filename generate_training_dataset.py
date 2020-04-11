@@ -59,6 +59,9 @@ if __name__ == "__main__":
     for file_path in progress_bar:
         dataset_x = []
         dataset_labels = []
+        dataset_number_sample_per_label = {
+            label: 0 for label in utils.LABELS.keys()
+        }
 
         point_cloud = np.load(file_path)
 
@@ -110,15 +113,34 @@ if __name__ == "__main__":
 
             if (labels.shape[0] == 0):
                 dataset_labels.append(13)
+                dataset_number_sample_per_label[13] += 1
             else:
                 (values, counts) = np.unique(labels, return_counts=True)
                 label_index = np.argmax(counts)
                 label = values[label_index]
+                dataset_number_sample_per_label[label] += 1
                 dataset_labels.append(label)
 
         dataset_x = np.array(dataset_x, dtype=np.float32)
         dataset_labels = np.array(dataset_labels, dtype=np.float32)
         dataset_name = file_path.split("fused")[-1][:-4]
+
+        with open("{}/{}.info".format(utils.TRAINING_DATASET_DIR, dataset_name), "w") as file_info:  # noqa
+            file_info.write("Training dataset {}\n\n".format(dataset_name))
+            file_info.write("number of sample: {}\n".format(
+                file_info.write("Label info:"),
+                voxel_grid_centers.shape[0])
+            )
+            for label, label_name in utils.LABELS.items():
+                file_info.write(
+                    "    number of {}-{}: {}\n".format(
+                        label,
+                        label_name,
+                        dataset_number_sample_per_label[label]
+                    )
+                )
+            file_info.write("R: {}\n".format(args.R))
+            file_info.write("N: {}\n".format(args.N))
 
         np.save("{}/{}_x.npy".format(utils.TRAINING_DATASET_DIR,
                                      dataset_name), dataset_x)
