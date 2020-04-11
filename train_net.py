@@ -70,7 +70,7 @@ if __name__ == "__main__":
             x, y = batch[0].to(device), batch[1].to(device)
             optimizer.zero_grad()
             y_pred = model(x)
-            loss = criterion(torch.log10(y_pred), y)
+            loss = criterion(torch.log(y_pred), y)
             running_loss += loss.item()
             t.set_description(
                 "Epoch {:03d} / {} - Batch loss = {:.9f}".format(
