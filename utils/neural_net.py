@@ -13,7 +13,7 @@ class Net(nn.Module):
         super(Net, self).__init__()
 
         # Output classes
-        self.o = 13
+        self.o = 14
 
         # Number of channels (3 for RGB)
         self.c = 1
