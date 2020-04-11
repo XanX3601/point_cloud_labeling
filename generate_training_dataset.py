@@ -127,10 +127,12 @@ if __name__ == "__main__":
 
         with open("{}/{}.info".format(utils.TRAINING_DATASET_DIR, dataset_name), "w") as file_info:  # noqa
             file_info.write("Training dataset {}\n\n".format(dataset_name))
+
             file_info.write("number of sample: {}\n".format(
-                file_info.write("Label info:"),
                 voxel_grid_centers.shape[0])
             )
+
+            file_info.write("Label info:\n"),
             for label, label_name in utils.LABELS.items():
                 file_info.write(
                     "    number of {}-{}: {}\n".format(
