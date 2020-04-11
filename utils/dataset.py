@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 import torch.utils.data as data
 
@@ -12,9 +13,21 @@ TRAINING_DATASET_DIR = "dataset/training_dataset"
 
 class Dataset(data.dataset.Dataset):
     def __init__(self):
-        self.x = torch.randint(
-            0, 2, (320, 1, 20, 20, 20), dtype=torch.float32)
-        self.y = torch.randint(0, 14, (320,))
+        """For the moment we keep 06 for testing."""
+        self.x = []
+        self.y = []
+
+        for i in range(1, 6):
+            x = np.load("{}/0{}_x.npy".format(TRAINING_DATASET_DIR, i))
+            y = np.load("{}/0{}_y.npy".format(TRAINING_DATASET_DIR, i))
+            self.x.append(x)
+            self.y.append(y)
+
+        self.x = np.concatenate(self.x, axis=0)
+        self.y = np.concatenate(self.y, axis=0)
+
+        self.x = torch.from_numpy(self.x).float()
+        self.y = torch.from_numpy(self.y).long()
 
     def __getitem__(self, index):
         return self.x[index], self.y[index]
