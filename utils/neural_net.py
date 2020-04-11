@@ -15,7 +15,7 @@ class Net(nn.Module):
         # Output classes
         self.o = 14
 
-        # Number of channels (3 for RGB)
+        # Number of channels (4 for RGB)
         self.c = 1
 
         # Input convolution
