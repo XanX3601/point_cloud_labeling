@@ -34,3 +34,9 @@ First, you need to create a neural network model. To do so, simple use the follo
 ```shell
 python create_net.py --path networks/neural_net.pt
 ```
+
+Then, you need to train the neural network. ADd `--cuda` for GPU support. Type `--help` for more info.
+
+```shell
+python train_net.py --path networks/neural_net.pt
+```
