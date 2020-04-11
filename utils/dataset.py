@@ -13,3 +13,21 @@ class Dataset(data.dataset.Dataset):
 
     def __len__(self):
         return len(self.x)
+
+
+LABELS = {
+    0: "terrain",
+    1: "tree",
+    2: "vegetation",
+    3: "building",
+    4: "road",
+    5: "guard_rail",
+    6: "traffic_sign",
+    7: "traffic_light",
+    8: "pole",
+    9: "misc",
+    10: "truc",
+    11: "car",
+    12: "van",
+    13: "none",
+}
