@@ -1,6 +1,14 @@
 import torch
 import torch.utils.data as data
 
+NPY_DIR = "dataset/numpy_files"
+
+POINT_CLOUD_DIRS = [
+    "{}/vkitti3d_dataset_v1.0/0{}".format(NPY_DIR, i) for i in range(1, 7)
+]
+
+TRAINING_DATASET_DIR = "dataset/training_dataset"
+
 
 class Dataset(data.dataset.Dataset):
     def __init__(self):

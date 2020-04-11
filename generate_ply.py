@@ -6,7 +6,6 @@ import tqdm
 
 import utils
 
-NPY_DIR = "dataset/numpy_files"
 PLY_DIR = "dataset/ply_files"
 
 if __name__ == "__main__":
@@ -14,7 +13,7 @@ if __name__ == "__main__":
         os.mkdir(PLY_DIR)
 
     # Get all npy files paths
-    files = glob.glob("{}/**/*.npy".format(NPY_DIR), recursive=True)
+    files = glob.glob("{}/**/*.npy".format(utils.NPY_DIR), recursive=True)
 
     # For each file, generate its ply file
     for f in tqdm.tqdm(files):
