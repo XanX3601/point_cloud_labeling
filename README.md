@@ -55,3 +55,9 @@ Then, you need to train the neural network. Add `--cuda` for GPU support. Type `
 ```shell
 python train_net.py --path networks/neural_net.pt
 ```
+
+Finally, to labelize a point cloud, just use the following command. Add `--cuda` for GPU support.
+
+```shell
+python point_cloud_labeling.py
+```
