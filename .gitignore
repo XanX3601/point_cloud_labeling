@@ -168,5 +168,8 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-# ignore dataset dir
+# Ignore dataset dir
 dataset/
+
+# Ignore results dir
+results/
