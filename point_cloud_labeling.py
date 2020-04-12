@@ -98,8 +98,9 @@ if __name__ == "__main__":
 
     neighbors_indexes = kdtree.query_radius(
         voxel_centers, (args.R / args.N / 2))
-    voxel_values = np.array([len(neighbors)
-                             for neighbors in neighbors_indexes])
+    voxel_values = np.array([
+        1 if len(neighbors) > 0 else 0 for neighbors in neighbors_indexes
+    ])
 
     nb_voxel_in_voxel_grid = args.N ** 3
 
