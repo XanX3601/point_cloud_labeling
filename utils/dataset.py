@@ -47,7 +47,7 @@ LABELS = {
     7: "traffic_light",
     8: "pole",
     9: "misc",
-    10: "truc",
+    10: "truck",
     11: "car",
     12: "van",
     13: "none",
