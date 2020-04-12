@@ -75,7 +75,7 @@ if __name__ == "__main__":
         }
         number_of_sample_per_label = np.min(counts)
         probability_per_label = {
-            number_of_sample_per_label / label_to_number_of_point[label] for label in values  # noqa
+            label: number_of_sample_per_label / label_to_number_of_point[label] for label in values  # noqa
         }
 
         # Compute bounb box
