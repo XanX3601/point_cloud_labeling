@@ -1,0 +1,24 @@
+\section{Labeling point cloud with \gls{3dcnn}}
+\label{sec:summary}
+
+The approach presented by \citeauthor*{7900038} is composed of two steps which is very classic when working with neural networks. The first step aims to train the neural network on training data that need to be computed beforehand. The second is the exploitation of the trained network to label new point clouds.
+
+\subsection{Point cloud preprocessing and voxelization}
+
+In order to use a convolution operation, we need a well defined matrix filled with values. A point cloud is not a well defined grid, its shape is irregular and therefore, a convolution operation is hard to compute directly on the raw data. A first approach was to project the three dimensional data into depth images which are well defined grids of pixels that can be treated by two dimensional convolution. Projecting data on smaller space mean that there is a lost of information. The challenge is to extract structures that can easily be used into three dimensional convolution from a point cloud.\\
+
+The voxelization of a point cloud brings a regular grid around a point cloud where each cell, called voxel, represents a single value. As it is a regular grid, it can be passed through a convolution operation. Therefore, the step needed before using a \gls{3dcnn} on the data is to compute a voxel grid that can be seen as a matrix. The size and shape of a point cloud being seriously inconsistent, the entire voxel grid cannot be processed at once. A \gls{3dcnn} is much easier to use when the inputs are consistent in size. The ingenious idea depicted \cite{7900038} is to compute a voxel grid on the entire cloud point, attribute a value and a label to each cell and then extract sub-grid that can be fed to the network.\\
+
+To compute the entire voxel grids, a box bound containing the entire point cloud must be computed and it is then used to place the centers of each voxel on the grid. The entire bound box is densely sampled by voxel of size \(\frac{R}{N} * \frac{1}{2}\). To attribute values to each voxel, \citeauthor*{7900038} explain two approaches. First, one can put 1 in a voxel containing at least a point and 0 otherwise. Secondly, one can count the number of points in a voxel and set its value to its density.\\
+
+Having a value set for each voxel, the next step is to attribute a label to each one. The simplest way to do so is to count the number of occurrences of each label inside a voxel and elect the most frequent one. If an equality occur, a random one can be attributed among the most frequent.\\
+
+The last step is to extract sub-grids that can be fed to network later on. To do so, for each voxel of center \((x, y, z)\), we consider a box defined by \([x - \frac{R}{2}, x + \frac{R}{2}] \times [y - \frac{R}{2}, y + \frac{R}{2}] \times [z - \frac{R}{2}, z + \frac{R}{2}]\) which is composed of \(N \times N \times N\) voxels. Theses sub-grids can be extracted for each voxel and are labeled as the voxel in their centre.
+
+\subsection{The \gls{3dcnn}}
+
+Once that all the voxel grids are extracted from the point cloud, they can be passed to the network. The one used by \citeauthor*{7900038} is fairly simple and is composed of two 3D convolutional layers, two 3D pooling layers and one fully-connected layer. It looks strongly alike to any \gls{2dcnn} used on images. This network takes matrices of size \((1 \times N \times N \times N)\) and outputs a probability distribution over the different labels.
+
+\subsection{Infer label using the network}
+
+We can finally use the neural network to labelize a new point cloud. We follow the same voxelization step we have just described. After that, the process is pretty straightforward, we simply label each point in the voxel at the center of each grid with the label given by the network.

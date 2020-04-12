@@ -1,6 +1,6 @@
 # point_cloud_labelling
 
-In this project, we try to implement the method described in [this paper](https://ieeexplore.ieee.org/abstract/document/7900038). You can also find it in [`materials`](materials/). The goal is to labelize a point cloud without a previous "segmentation step or hand-crafted features". To do so, we will use a 3-dimensional convolutional artificial neural network.
+In this project, we try to implement the method described in [this paper](https://ieeexplore.ieee.org/abstract/document/7900038). You can also find it in [`materials`](materials/). The goal is to labelize a point cloud without a previous "segmentation step or hand-crafted features". To do so, we will use a 3-dimensional convolutional artificial neural network. We describe our work in a [report](materials/report/main.pdf).
 
 ## Prerequisites
 
@@ -21,16 +21,13 @@ wget -O dataset/dataset.zip https://www.vision.rwth-aachen.de/media/resource_fil
 unzip dataset/dataset.zip -d dataset/numpy_files
 ```
 
-A script allows you to fuse each cloud points from the dataset into a unique
-clous point. These fused cloud points are used to generate the training
-datasets.
+A script allows you to fuse each cloud points from the dataset into a unique clous point. These fused cloud points are used to generate the training datasets.
 
 ```shell
 python fuse_npy.py
 ```
 
-A script allows you to transform the fused cloud points into training datasets that
-will be fed to the neural network during the training.
+A script allows you to transform the fused cloud points into training datasets that will be fed to the neural network during the training.
 
 ```shell
 python generate_training_dataset.py

@@ -1,0 +1,37 @@
+\documentclass{article}
+\usepackage[top=3cm,bottom=3cm,left=3cm,right=3cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[default]{sourcesanspro}
+\usepackage[hidelinks]{hyperref}
+\usepackage[acronym]{glossaries}
+\usepackage{glossary-inline}
+\usepackage{graphicx}
+\usepackage{float}
+
+\usepackage{biblatex}
+\addbibresource{sources/references.bib}
+
+\makeglossaries
+\input{sources/glossary}
+\setglossarystyle{inline}
+
+\title{Point Cloud Labeling using 3D Convolutional Neural Network}
+\author{Elie \textsc{Kadoche}, Thomas \textsc{Petiteau}}
+\date{12/04/2020}
+
+\begin{document}
+
+\maketitle
+
+\input{sources/intro}
+\input{sources/summary}
+\input{sources/dataset}
+\input{sources/implementation}
+\input{sources/results}
+\input{sources/future}
+\input{sources/conclusion}
+
+\printglossaries
+\printbibliography
+
+\end{document}

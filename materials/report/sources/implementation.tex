@@ -1,0 +1,19 @@
+\section{Implementation choices}
+\label{sec:implementation}
+
+In this section we discuss the choices we made for implementing the algorithm \cite{7900038}.
+We will also discuss the problems we encounter in the comprehension of the article or while programming.
+
+\subsection{Training datasets}
+
+In their article, \citeauthor*{7900038} suggest to balance the number of training samples between each category. This is to ensure that the network is trained evenly on all classes and that it does not learn any bias towards the most frequent classes. We agree on this point and tried to implement this balance. The problem is that, in our dataset, the class frequencies are highly uneven.
+Moreover, when creating training samples from cloud point, we obtain a lot of samples from different classes. With our computation power, we could not afford to save all the samples in one place. We were then in the incapacity to sort training samples after-hand, once they were all extracted. We decided to choose the training samples randomly with a bias towards the class appearing less often. Our goal is to elect an even number of voxel for each class. To do so, we suppose that the distribution of classes over the point will be mostly the same with voxels. We then elect a voxel to be a training sample by choosing a random number between 0 and 1 that needs to be lower than \(\frac{n_{j}}{\min_{i \in L}(n_{i})}\) where \(n_{i}\) is the number of points with label \(i\), \(L\) is the set of labels and \(j\) is the label of the voxel. Unfortunately, this solution, although it let us pick a reasonable amount of training samples, it does not ensure the balanced between categories. The problem being that, for certain category, the amount of available voxels will be limited and thus, we cannot ensure a good balance between number of training samples and the even amount of training samples per class.
+
+\subsection{Story of granularity}
+
+In their article, \citeauthor*{7900038} speak, in section VI, dedicated to the label inference, of an alternative to the compact division of the point cloud. In the voxelization process, the point cloud is divided into a lot of voxels. The number increases rapidly and can quickly become a problem for low specs machine. Therefore, an approach that would give close results in less time, would be interesting. The granularity seems to be a solution they found but they don't give a proper explanation in their experiments.
+
+\subsection{KDTree for cubes}
+
+In order to compute the voxelization, an easy way to find to which voxel a point belong is to use a KDTree. Combine with a Chebyshev distance, it allows to quickly find all the points in a cube.
+At first, we did not use a KDTree and it multiplied the computation time needed for voxelization by an enormous factor.

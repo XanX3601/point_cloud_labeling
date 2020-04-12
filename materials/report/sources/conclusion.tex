@@ -1,0 +1,8 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+In this article, we tested an approach suggested by \citeauthor*{7900038} in an article \cite{7900038} in 2016. They used a \gls{3dcnn} to labelize each point of a cloud. Their algorithm does not require prior knowledge on the cloud which is new in the approach of the problem. Previously, a certain numbers of features would be required and thus, would require computation time. With this new strategy, they reduce the computation time to a few minutes. Their approach consists in voxelizing the point cloud and feed cube of voxels to a neural network that use convolution in way that is similar to what neural networks already do on 2D images. The prediction of the network are then used to set the label of the points at the center of the cube used in input.\\
+
+We implemented their algorithm and we tested it on a dataset with twice more categories, and a strong ubalanced labels repartition. We found this approach very interested, and we think we managed to implement it in a efficient way. Unfortunately, we did not manage to get the expected results. We explain this by the dataset properties and the lack of computation power.\\
+
+PointNet \cite{qi2016pointnet}, proposes a another kind of neural network fixing some of the issues of the presented method. PointNet allows to consume point clouds directly, without having to transform it in a regular 3D voxel grids. Such a method might be a better approach, simpler and more efficient.
