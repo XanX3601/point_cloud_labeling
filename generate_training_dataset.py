@@ -59,6 +59,10 @@ if __name__ == "__main__":
 
     # For each point cloud
     for file_path in progress_bar:
+        # We will use this point cloud for testing
+        if file_path == "dataset/numpy_files/vkitti3d_dataset_v1.0/06/fused06.npy":  # noqa
+            continue
+
         dataset_x = []
         dataset_y = []
         dataset_number_sample_per_label = {
