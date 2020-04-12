@@ -1,6 +1,7 @@
 import argparse
 import glob
 import os
+import random
 import sys
 
 import numpy as np
@@ -45,7 +46,8 @@ if __name__ == "__main__":
     # Retrieve file paths
     # ---------------
 
-    files = glob.glob("{}/**/fused*.npy".format(utils.NPY_DIR), recursive=True)
+    files = glob.glob(
+        "{}/**/fused*.npy".format(utils.NPY_DIR), recursive=True)
     progress_bar = tqdm.tqdm(
         files,
         desc="Cloud points",
@@ -58,78 +60,107 @@ if __name__ == "__main__":
     # For each point cloud
     for file_path in progress_bar:
         dataset_x = []
-        dataset_labels = []
+        dataset_y = []
         dataset_number_sample_per_label = {
-            label: 0 for label in utils.LABELS.keys()
-        }
+            label: 0 for label in utils.LABELS.keys()}
 
         point_cloud = np.load(file_path)
 
-        voxel_grid_centers = utils.grid_centers(
-            utils.bound_box(point_cloud[:, 0:3]),
-            args.R
+        # Find label count and nb example per category
+        # ---------------
+
+        (values, counts) = np.unique(point_cloud[:, -1], return_counts=True)
+        label_to_number_of_point = {
+            values[i]: counts[i] for i in range(values.shape[0])
+        }
+        number_of_sample_per_label = np.min(counts)
+        probability_per_label = {
+            number_of_sample_per_label / label_to_number_of_point[label] for label in values  # noqa
+        }
+
+        # Compute bounb box
+        # ---------------
+
+        bound_box = utils.bound_box(point_cloud[:, 0:3])
+
+        # Extend bound box to ensure that each voxel has enough neighbors
+        bound_box_extended = list(bound_box)
+        bound_box_extended[0] -= args.R / 2
+        bound_box_extended[1] += args.R / 2
+        bound_box_extended[2] -= args.R / 2
+        bound_box_extended[3] += args.R / 2
+        bound_box_extended[4] -= args.R / 2
+        bound_box_extended[5] += args.R / 2
+
+        # Compute grid
+        # ---------------
+
+        voxel_centers = utils.grid_centers(
+            bound_box_extended,
+            args.R / args.N,
         )
+        progress_bar.write("nb voxel {}".format(voxel_centers.shape[0]))
+
+        # Compute KDTree
+        # ---------------
 
         kdtree = sklearn.neighbors.KDTree(
             point_cloud[:, 0:3], metric="chebyshev")
 
-        sub_progress_bar = tqdm.tqdm(
-            voxel_grid_centers, leave=False, desc="Voxel grids", unit="vg")
+        # Main computation
+        # ---------------
 
-        # For each voxel grid
-        for center_voxel_grid in sub_progress_bar:
-            # Compute voxel grid values
-            # ---------------
+        neighbors_indexes = kdtree.query_radius(
+            voxel_centers, (args.R / args.N / 2))
+        voxel_values = np.array([len(neighbors)
+                                 for neighbors in neighbors_indexes])
 
-            # Compute center of each voxel in the voxel grid
-            voxel_centers = utils.grid_centers(
-                [
-                    center_voxel_grid[0] - args.R / 2,
-                    center_voxel_grid[0] + args.R / 2,
-                    center_voxel_grid[1] - args.R / 2,
-                    center_voxel_grid[1] + args.R / 2,
-                    center_voxel_grid[2] - args.R / 2,
-                    center_voxel_grid[2] + args.R / 2,
-                ],
-                args.R / args.N
-            )
+        nb_voxel_in_voxel_grid = args.N ** 3
 
-            # Find the number oi points in each voxel
-            number_of_point_per_voxel = kdtree.query_radius(
-                voxel_centers, (args.R / args.N) / 2, count_only=True)
-            # Reshape the result
-            voxel_grid_values = np.reshape(number_of_point_per_voxel,
-                                           (1, args.N, args.N, args.N))
-            voxel_grid_values[voxel_grid_values > 0] = 1
+        sub_progress_bar = tqdm.trange(
+            voxel_centers.shape[0],
+            desc="Voxel centers",
+            leave=False)
+        for voxel_center_index in sub_progress_bar:
+            points_in_voxel = point_cloud[
+                neighbors_indexes[voxel_center_index]
+            ]
 
-            dataset_x.append(voxel_grid_values)
+            if points_in_voxel.shape[0] > 0:
+                labels = points_in_voxel[:, -1]
 
-            # Compute voxel grid label
-            # ---------------
+                if (labels.shape[0] == 0):
+                    voxel_label = 13
+                else:
+                    (values, counts) = np.unique(labels, return_counts=True)
+                    label_index = np.argmax(counts)
+                    voxel_label = values[label_index]
 
-            point_filter = kdtree.query_radius(np.reshape(
-                center_voxel_grid, (1, -1)), args.R)[0]
-            labels = point_cloud[point_filter][:, -1]
+                if random.random() <= probability_per_label[voxel_label]:
+                    matrix = voxel_values[
+                        voxel_center_index - nb_voxel_in_voxel_grid // 2:
+                        voxel_center_index + nb_voxel_in_voxel_grid // 2
+                    ]
 
-            if (labels.shape[0] == 0):
-                dataset_labels.append(13)
-                dataset_number_sample_per_label[13] += 1
-            else:
-                (values, counts) = np.unique(labels, return_counts=True)
-                label_index = np.argmax(counts)
-                label = values[label_index]
-                dataset_number_sample_per_label[label] += 1
-                dataset_labels.append(label)
+                    matrix = np.reshape(matrix, (1, args.N, args.N, args.N))
 
-        dataset_x = np.array(dataset_x, dtype=np.float32)
-        dataset_labels = np.array(dataset_labels, dtype=np.float32)
+                    dataset_x.append(matrix)
+                    dataset_y.append(voxel_label)
+                    dataset_number_sample_per_label[voxel_label] += 1
+
+        dataset_x = np.array(dataset_x)
+        dataset_y = np.array(dataset_y)
+
+        progress_bar.write(str(dataset_x.shape))
+        progress_bar.write(str(dataset_y.shape))
+
         dataset_name = file_path.split("fused")[-1][:-4]
 
         with open("{}/{}.info".format(utils.TRAINING_DATASET_DIR, dataset_name), "w") as file_info:  # noqa
             file_info.write("Training dataset {}\n\n".format(dataset_name))
 
             file_info.write("number of sample: {}\n".format(
-                voxel_grid_centers.shape[0])
+                dataset_x.shape[0])
             )
 
             file_info.write("Label info:\n"),
@@ -147,4 +178,4 @@ if __name__ == "__main__":
         np.save("{}/{}_x.npy".format(utils.TRAINING_DATASET_DIR,
                                      dataset_name), dataset_x)
         np.save("{}/{}_y.npy".format(utils.TRAINING_DATASET_DIR,
-                                     dataset_name), dataset_labels)
+                                     dataset_name), dataset_y)
