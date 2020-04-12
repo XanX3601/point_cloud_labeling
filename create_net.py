@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     # Using CUDA if asked and available
     # ---------------
-    use_cuda = args.cuda and torch.cuda_is_available()
+    use_cuda = args.cuda and torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
 
     # Creating and saving the neural net
