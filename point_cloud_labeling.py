@@ -86,7 +86,6 @@ if __name__ == "__main__":
         bound_box_extended,
         args.R / args.N,
     )
-    print(voxel_centers.shape)
 
     # Compute KDTree
     # ---------------
@@ -99,8 +98,6 @@ if __name__ == "__main__":
 
     neighbors_indexes = kdtree.query_radius(
         voxel_centers, (args.R / args.N / 2))
-    print(neighbors_indexes.shape)
-    print(neighbors_indexes[0].shape)
     voxel_values = np.array([len(neighbors)
                              for neighbors in neighbors_indexes])
 
@@ -114,9 +111,7 @@ if __name__ == "__main__":
 
     for voxel_center_index in progress_bar:
         neighbors_filter = neighbors_indexes[voxel_center_index]
-        points_in_voxel = point_cloud[
-            neighbors_filter[voxel_center_index]
-        ]
+        points_in_voxel = point_cloud[neighbors_filter]
 
         if points_in_voxel.shape[0] > 0:
 
@@ -126,8 +121,11 @@ if __name__ == "__main__":
             ]
 
             matrix = np.reshape(matrix, (1, 1, args.N, args.N, args.N))
-            label = model(torch.from_numpy(matrix).float())
-            predicted_labels[neighbors_filter] = label.item()
+
+            out = model(torch.from_numpy(matrix).float())
+            label = torch.argmax(out)
+
+            predicted_labels[neighbors_filter] = label
 
     # Create ply
     # ---------------
