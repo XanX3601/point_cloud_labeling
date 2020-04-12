@@ -31,22 +31,10 @@ def grid_centers(bound_box, cell_size):
     Returns:
         A (-1, 3) shape np array containing the grid centers
     """
-    bb = list(bound_box)
-
-    bb[1] = bb[1] + cell_size \
-        if ((bb[1] - bb[0]) // cell_size) * cell_size < bb[1] - bb[0] \
-        else bb[1]
-    bb[3] = bb[3] + cell_size \
-        if ((bb[3] - bb[2]) // cell_size) * cell_size < bb[3] - bb[2] \
-        else bb[3]
-    bb[5] = bb[5] + cell_size \
-        if ((bb[5] - bb[4]) // cell_size) * cell_size < bb[5] - bb[4] \
-        else bb[5]
-
     grid = np.mgrid[
-        bb[0] + cell_size / 2: bb[1]: cell_size,
-        bb[2] + cell_size / 2: bb[3]: cell_size,
-        bb[4] + cell_size / 2: bb[5]: cell_size,
+        bound_box[0] + cell_size / 2: bound_box[1]: cell_size,
+        bound_box[2] + cell_size / 2: bound_box[3]: cell_size,
+        bound_box[4] + cell_size / 2: bound_box[5]: cell_size,
     ].T
 
     grid = np.reshape(grid, (-1, 3))
