@@ -99,7 +99,6 @@ if __name__ == "__main__":
             bound_box_extended,
             args.R / args.N,
         )
-        progress_bar.write("nb voxel {}".format(voxel_centers.shape[0]))
 
         # Compute KDTree
         # ---------------
@@ -150,10 +149,6 @@ if __name__ == "__main__":
 
         dataset_x = np.array(dataset_x)
         dataset_y = np.array(dataset_y)
-
-        progress_bar.write(str(dataset_x.shape))
-        progress_bar.write(str(dataset_y.shape))
-
         dataset_name = file_path.split("fused")[-1][:-4]
 
         with open("{}/{}.info".format(utils.TRAINING_DATASET_DIR, dataset_name), "w") as file_info:  # noqa
