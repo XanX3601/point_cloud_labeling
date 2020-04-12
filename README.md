@@ -8,6 +8,7 @@ You need to have Python 3.7 (at least) installed on your computer. To begin, exe
 
 ```shell
 git clone https://github.com/XanX3601/point_cloud_labeling.git
+cd point_cloud_labeling
 pip install -r requirements.txt
 ```
 
